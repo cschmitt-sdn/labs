@@ -1,0 +1,47 @@
+version: "3.4"
+services:
+  es:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.3.2
+    container_name: es
+    environment:
+      - discovery.type=single-node
+    ports:
+      - 9200:9200
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+  web:
+    #image: prakhar1989/foodtrucks-web
+    #build: .
+    image: daz-labs.jfrog.io/foodtruck-web:1.0.3
+    command: sfx-py-trace app.py
+    #command: python3 app.py
+    depends_on:
+      - es
+    environment: 
+      - DEBUG=True 
+    ports:
+      - 5000:5000
+#    volumes:
+#      - ./flask-app:/opt/flask-app
+  sfx-agent:
+    container_name: sfx-agent
+    image: quay.io/signalfx/signalfx-agent:5
+    #network_mode: host
+    pid: host
+    ports: 
+      - 9080:9080
+    volumes:
+      - /:/hostfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/passwd:/etc/passwd
+      - /home/cschmitt/git/sfx:/etc/signalfx
+  locust:
+    image: locustio/locust
+    ports:
+      - 8089:8089
+    volumes:
+      - /home/cschmitt/git/locust:/mnt/locust
+    command: -f /mnt/locust/locustfile.py --headless -H http://10.10.255.121:5000 -u 10 -r 1
+volumes:
+    esdata1:
+      driver: local
