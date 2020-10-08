@@ -12,7 +12,7 @@ services:
   web:
     #image: prakhar1989/foodtrucks-web
     #build: .
-    image: daz-labs.jfrog.io/foodtruck-web:1.0.3
+    image: daz-labs.jfrog.io/foodtruck-web:1.0.0
     command: sfx-py-trace app.py
     #command: python3 app.py
     depends_on:
@@ -34,13 +34,13 @@ services:
       - /:/hostfs:ro
       - /var/run/docker.sock:/var/run/docker.sock
       - /etc/passwd:/etc/passwd
-      - /home/cschmitt/git/sfx:/etc/signalfx
+      - ./sfx:/etc/signalfx
   locust:
     image: locustio/locust
     ports:
       - 8089:8089
     volumes:
-      - /home/cschmitt/git/locust:/mnt/locust
+      - ./locust:/mnt/locust
     command: -f /mnt/locust/locustfile.py --headless -H http://10.10.255.121:5000 -u 10 -r 1
 volumes:
     esdata1:
