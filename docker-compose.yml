@@ -12,7 +12,7 @@ services:
   web:
     #image: prakhar1989/foodtrucks-web
     #build: .
-    image: daz-labs.jfrog.io/foodtruck-web:1.0.0
+    image: daz2.jfrog.io/daz-srelabs/foodtruck-web/foodtruck-web:1.0.0
     container_name: foodtruck
     command: sfx-py-trace app.py
     #command: python3 app.py
